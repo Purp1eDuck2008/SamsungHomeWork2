@@ -3,19 +3,19 @@ fun checkForIndex(
     stringRequest1: String,
 ) : Int {
     var index: Int
-    while (true) {
-        println(stringRequest1)
-        try {
-            index = readln().trim().toInt()
-            if (index in 1..library.getSize()) {
-                break
+        while (true) {
+            println(stringRequest1)
+            try {
+                index = readln().trim().toInt()
+                if (index in 1..library.getSize()) {
+                    break
+                }
+                println("Номер должен быть от 1 до ${library.getSize()}")
+            } catch (e: NumberFormatException) {
+                println("Нужно ввести целое число")
             }
-            println("Номер должен быть от 1 до ${library.getSize()}")
-        } catch (e: NumberFormatException) {
-            println("Нужно ввести целое число")
         }
-    }
-    return index
+        return index
 }
 
 fun main() {
@@ -57,16 +57,16 @@ fun main() {
         when (input) {
             "1" -> {
                 println("Введите название книги:")
-                val title: String = readln()
+                val title: String = readlnOrNull() ?: return
 
                 println("Введите ФИО автора книги:")
-                val author: String = readln()
+                val author: String = readlnOrNull() ?: return
 
                 var yearOfRelease = 0
                 while (true) {
                     println("Введите год выпуска книги:")
                     try {
-                        yearOfRelease = readln().trim().toInt()
+                        yearOfRelease = (readlnOrNull() ?: return).trim().toInt()
                         break
                     } catch (e: NumberFormatException) {
                         println("Нужно ввести целое число")
@@ -75,7 +75,7 @@ fun main() {
 
                 println("Эту книгу можно выдавать посителям? [Y/n]")
                 var isAvailable: Boolean = true
-                if (readln() == "n"){
+                if (readlnOrNull() == "n"){
                     isAvailable = false
                 }
                 library.addBook(Book(title, author, yearOfRelease, isAvailable))
@@ -86,17 +86,20 @@ fun main() {
                 println()
 
                 if (library.getSize() > 0) {
-                    var index: Int = checkForIndex(library,"Выберите номер книги для удаления:")
-                    library.removeBook(index - 1)
+                    val index: Int = checkForIndex(library,"Выберите номер книги для удаления:")
+                    when(library.removeBook(index - 1)) {
+                        OperationResult.SUCCESS -> println("Книга удалена из библиотеки")
+                        OperationResult.FAILURE -> println("Не поулчилось удалить книгу из библиотеки")
+                    }
                 }
                 else {
-                    println("Список книг пуст, удаление невозможно")
+                    println("Список книг пуст")
                 }
             }
 
             "3" -> {
                 println("Введите ФИО автора:")
-                val found = library.searchByAuthor(readln())
+                val found = library.searchByAuthor(readlnOrNull() ?: return)
                 if (found.isNotEmpty()) {
                     println("Книги найденные по вашему запросу:")
                     found.forEach { println(it) }
@@ -107,13 +110,13 @@ fun main() {
 
             "4" -> {
                 println("Введите название, интересующей вас книги:")
-                val found = library.searchByTitle(readln())
+                val found = library.searchByTitle(readlnOrNull() ?: return)
                 if (found.isNotEmpty()) {
                     println("Книги найденные по вашему запросу:")
                     found.forEach { println(it) }
                 }
                 else {
-                    println("Книги этого автора не найдены")
+                    println("Книги с таким названием не найдеы")
                 }
             }
 
@@ -121,8 +124,11 @@ fun main() {
                 library.listOfBook()
                 if (library.getSize() > 0) {
                     val index = checkForIndex(library, "Выберите номер интересующей вас книги:")
-                    library.takeBookFromLibrary(index - 1)
-                    println("Книга выдана")
+                    when (library.takeBookFromLibrary(index - 1)) {
+                        OperationResult.SUCCESS -> println("Книга выдана")
+                        OperationResult.FAILURE -> println("Книга не выдана")
+                    }
+
                 } else {
                     println("Список книг пуст")
                 }
@@ -132,7 +138,10 @@ fun main() {
                 library.listOfBook()
                 if (library.getSize() > 0) {
                     val index = checkForIndex(library, "Выберите номер книги которую желаете вернуть:")
-                    library.returnBookToLibrary(index - 1)
+                    when (library.returnBookToLibrary(index - 1)) {
+                        OperationResult.FAILURE -> println("Не получилось вернуть книгу")
+                        OperationResult.SUCCESS -> println("Книгу вернулась")
+                    }
                 } else {
                     println("Список книг пуст")
                 }

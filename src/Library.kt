@@ -30,10 +30,10 @@ class Library(
     //Удаление книги из библиотеки
     fun removeBook(
         index: Int
-    ) {
-        if (index in 0 until bookCollection.size) {
-            bookCollection.removeAt(index)
-        }
+    ) : OperationResult {
+        if (index !in 0 until bookCollection.size ) { return OperationResult.FAILURE }
+        bookCollection.removeAt(index)
+        return OperationResult.SUCCESS
     }
 
     //Поиск книги в библиотеке по автору
@@ -48,20 +48,20 @@ class Library(
     //Выдача книги по индексу
     fun takeBookFromLibrary(
         index: Int
-    ) {
-        if (bookCollection[index].isAvailable) {
-            bookCollection[index].isAvailable = false
-        }
-        else {
-            println("Книга занята другим пользователем, у нас нет возможности ее выдать")
-        }
+    ) : OperationResult {
+        if (index !in bookCollection.indices) { return OperationResult.FAILURE }
+        if (!bookCollection[index].isAvailable) {return OperationResult.FAILURE }
+        bookCollection[index].isAvailable = false
+        return OperationResult.SUCCESS
     }
 
     //Возврат книги по индексу
     fun returnBookToLibrary(
         index: Int
-    ) {
+    ) : OperationResult {
+        if (index !in bookCollection.indices) {return OperationResult.FAILURE}
         bookCollection[index].isAvailable = true
+        return OperationResult.SUCCESS
     }
 
     //Дополнительное задание (Сортировка книг по году выпуска)

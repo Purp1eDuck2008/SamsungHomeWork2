@@ -8,6 +8,7 @@ data class Book(
         return """
 Название: $title
 Автор: $author
-Год выпуска: $yearOfRelease""".trimIndent()
+Год выпуска: $yearOfRelease
+""".trimIndent()
     }
 }
