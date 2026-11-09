@@ -20,14 +20,14 @@ class Library(
         return bookCollection.size
     }
 
-    //добавления
+    //Добавление новой книги в библиотеку
     fun addBook(
         newBook: Book
     ) {
         bookCollection.add(newBook)
     }
 
-    //удаления
+    //Удаление книги из библиотеки
     fun removeBook(
         index: Int
     ) {
@@ -36,21 +36,20 @@ class Library(
         }
     }
 
-    //поиска книг по автору
+    //Поиск книги в библиотеке по автору
     fun searchByAuthor(authorName: String) =
         bookCollection.filter { it.author == authorName }
 
-    //поиска книг по названию
+    //Поиск книги в библиотеке по названию
     fun searchByTitle (
         title: String,
     ) = bookCollection.filter {it.title == title}
 
-    //выдачи
+    //Выдача книги по индексу
     fun takeBookFromLibrary(
         index: Int
     ) {
         if (bookCollection[index].isAvailable) {
-            println("Книга выдана")
             bookCollection[index].isAvailable = false
         }
         else {
@@ -58,14 +57,14 @@ class Library(
         }
     }
 
-    //возврата
+    //Возврат книги по индексу
     fun returnBookToLibrary(
         index: Int
     ) {
         bookCollection[index].isAvailable = true
     }
 
-    //Дополнительно
+    //Дополнительное задание (Сортировка книг по году выпуска)
     fun sortByYearOfRelease() {
         bookCollection.sortBy { it.yearOfRelease }
     }

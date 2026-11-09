@@ -96,12 +96,25 @@ fun main() {
 
             "3" -> {
                 println("Введите ФИО автора:")
-                println("Книги найденные по вашему запросу:${library.searchByAuthor(readln())}")
+                val found = library.searchByAuthor(readln())
+                if (found.isNotEmpty()) {
+                    println("Книги найденные по вашему запросу:")
+                    found.forEach { println(it) }
+                } else {
+                    println("Книги этого автора не найдены")
+                }
             }
 
             "4" -> {
                 println("Введите название, интересующей вас книги:")
-                println("Книги найденные по вашему запросу:${library.searchByTitle(readln())}")
+                val found = library.searchByTitle(readln())
+                if (found.isNotEmpty()) {
+                    println("Книги найденные по вашему запросу:")
+                    found.forEach { println(it) }
+                }
+                else {
+                    println("Книги этого автора не найдены")
+                }
             }
 
             "5" -> {
@@ -109,7 +122,7 @@ fun main() {
                 if (library.getSize() > 0) {
                     val index = checkForIndex(library, "Выберите номер интересующей вас книги:")
                     library.takeBookFromLibrary(index - 1)
-                    println("Спасибо, что остаетесь с нами")
+                    println("Книга выдана")
                 } else {
                     println("Список книг пуст")
                 }

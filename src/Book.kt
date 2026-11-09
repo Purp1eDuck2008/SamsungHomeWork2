@@ -6,11 +6,8 @@ data class Book(
 ) {
     override fun toString(): String {
         return """
-            
 Название: $title
 Автор: $author
-Год выпуска: $yearOfRelease
-
-        """.trimIndent()
+Год выпуска: $yearOfRelease""".trimIndent()
     }
 }
