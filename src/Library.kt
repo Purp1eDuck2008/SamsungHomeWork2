@@ -2,18 +2,8 @@ class Library(
     private val bookCollection: MutableList<Book>
 ) {
     //Вывод списка всех книг с индексом
-    fun listOfBook() {
-        if (bookCollection.isNotEmpty()) {
-            var numberOfBook: Int = 1
-            bookCollection.forEach { it ->
-                println("$numberOfBook: ${it.toString()}")
-                numberOfBook++
-            }
-        }
-        else {
-            println("Список книг пуст")
-        }
-    }
+    fun getNumberedBooks(): List<String> =
+        bookCollection.mapIndexed { index, book -> "${index + 1}: $book" }
 
     //Получение размера библиотеки
     fun getSize() : Int {
@@ -38,21 +28,19 @@ class Library(
 
     //Поиск книги в библиотеке по автору
     fun searchByAuthor(authorName: String) =
-        bookCollection.filter { it.author == authorName }
+        bookCollection.filter { it.author.lowercase() == authorName.lowercase() }
 
     //Поиск книги в библиотеке по названию
     fun searchByTitle (
         title: String,
-    ) = bookCollection.filter {it.title == title}
+    ) = bookCollection.filter {it.title.lowercase() == title.lowercase()}
 
     //Выдача книги по индексу
     fun takeBookFromLibrary(
         index: Int
     ) : OperationResult {
         if (index !in bookCollection.indices) { return OperationResult.INVALID_INDEX }
-        if (!bookCollection[index].isAvailable) {return OperationResult.ALREADY_TAKEN }
-        bookCollection[index].isAvailable = false
-        return OperationResult.SUCCESS
+        return bookCollection[index].take()
     }
 
     //Возврат книги по индексу
@@ -60,8 +48,7 @@ class Library(
         index: Int
     ) : OperationResult {
         if (index !in bookCollection.indices) {return OperationResult.INVALID_INDEX}
-        bookCollection[index].isAvailable = true
-        return OperationResult.SUCCESS
+        return bookCollection[index].returnBook()
     }
 
     //Дополнительное задание (Сортировка книг по году выпуска)
