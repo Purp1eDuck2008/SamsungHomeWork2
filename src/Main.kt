@@ -94,13 +94,11 @@ fun main() {
                 }
             }
 
-            //Сделано
             "3" -> {
                 println("Введите ФИО автора:")
                 println("Книги найденные по вашему запросу:${library.searchByAuthor(readln())}")
             }
 
-            //Сделано
             "4" -> {
                 println("Введите название, интересующей вас книги:")
                 println("Книги найденные по вашему запросу:${library.searchByTitle(readln())}")

@@ -1,7 +1,7 @@
 class Library(
     private val bookCollection: MutableList<Book>
 ) {
-    //вывод списка всех книг с индексом
+    //Вывод списка всех книг с индексом
     fun listOfBook() {
         if (bookCollection.isNotEmpty()) {
             var numberOfBook: Int = 1
@@ -15,14 +15,9 @@ class Library(
         }
     }
 
-    //размер
+    //Получение размера библиотеки
     fun getSize() : Int {
         return bookCollection.size
-    }
-
-    //возращать элемент по индексу
-    operator fun get(index: Int): Book {
-        return bookCollection[index]
     }
 
     //добавления
