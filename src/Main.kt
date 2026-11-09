@@ -1,3 +1,23 @@
+fun checkForIndex(
+    library: Library,
+    stringRequest1: String,
+) : Int {
+    var index: Int
+    while (true) {
+        println(stringRequest1)
+        try {
+            index = readln().trim().toInt()
+            if (index in 1..library.getSize()) {
+                break
+            }
+            println("Номер должен быть от 1 до ${library.getSize()}")
+        } catch (e: NumberFormatException) {
+            println("Нужно ввести целое число")
+        }
+    }
+    return index
+}
+
 fun main() {
     // тестовые значения
     val books = mutableListOf(
@@ -53,7 +73,12 @@ fun main() {
                     }
                 }
 
-                library.addBook(Book(title, author, yearOfRelease, true))
+                println("Эту книгу можно выдавать посителям? [Y/n]")
+                var isAvailable: Boolean = true
+                if (readln() == "n"){
+                    isAvailable = false
+                }
+                library.addBook(Book(title, author, yearOfRelease, isAvailable))
             }
 
             "2" -> {
@@ -61,21 +86,7 @@ fun main() {
                 println()
 
                 if (library.getSize() > 0) {
-                    var index: Int
-
-                    while (true) {
-                        println("Выберите номер книги для удаления:")
-                        try {
-                            index = readln().trim().toInt()
-                            if (index in 1..library.getSize()) {
-                                break
-                            }
-                            println("Номер должен быть от 1 до ${library.getSize()}")
-                        } catch (e: NumberFormatException) {
-                            println("Нужно ввести целое число")
-                        }
-                    }
-
+                    var index: Int = checkForIndex(library,"Выберите номер книги для удаления:")
                     library.removeBook(index - 1)
                 }
                 else {
@@ -97,46 +108,21 @@ fun main() {
 
             "5" -> {
                 library.listOfBook()
-                var index: Int = 0
                 if (library.getSize() > 0) {
-                    while (true) {
-                        println("Выберите номер интересующей вас книги:")
-                        try {
-                            index = readln().trim().toInt()
-                            if (index in 1..library.getSize()) {
-                                break
-                            }
-                            println("Номер должен быть от 1 до ${library.getSize()}")
-                        } catch (e: NumberFormatException) {
-                            println("Нужно ввести целое число")
-                        }
-                    }
+                    val index = checkForIndex(library, "Выберите номер интересующей вас книги:")
                     library.takeBookFromLibrary(index - 1)
-                }
-                else {
+                    println("Спасибо, что остаетесь с нами")
+                } else {
                     println("Список книг пуст")
                 }
             }
 
             "6" -> {
                 library.listOfBook()
-                var index: Int = 0
                 if (library.getSize() > 0) {
-                    while (true) {
-                        println("Выберите номер книги которую желаете вернуть:")
-                        try {
-                            index = readln().trim().toInt()
-                            if (index in 1..library.getSize()) {
-                                break
-                            }
-                            println("Номер должен быть от 1 до ${library.getSize()}")
-                        } catch (e: NumberFormatException) {
-                            println("Нужно ввести целое число")
-                        }
-                    }
+                    val index = checkForIndex(library, "Выберите номер книги которую желаете вернуть:")
                     library.returnBookToLibrary(index - 1)
-                }
-                else {
+                } else {
                     println("Список книг пуст")
                 }
             }

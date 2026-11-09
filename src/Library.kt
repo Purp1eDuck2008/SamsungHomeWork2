@@ -1,13 +1,6 @@
 class Library(
-    val bookCollection: MutableList<Book>
+    private val bookCollection: MutableList<Book>
 ) {
-    //Тест
-    private fun requireValidIndex(index: Int) {
-        require(index in bookCollection.indices) {
-            "Индекс $index вне диапазона 0..${bookCollection.lastIndex}"
-        }
-    }
-
     //вывод списка всех книг с индексом
     fun listOfBook() {
         if (bookCollection.isNotEmpty()) {
@@ -36,7 +29,6 @@ class Library(
     fun addBook(
         newBook: Book
     ) {
-        newBook.isAvailable = true
         bookCollection.add(newBook)
     }
 
@@ -76,7 +68,6 @@ class Library(
         index: Int
     ) {
         bookCollection[index].isAvailable = true
-        println("Спасибо, что остаетесь с нами")
     }
 
     //Дополнительно
