@@ -1,4 +1,5 @@
 enum class OperationResult {
     SUCCESS,
-    FAILURE,
+    INVALID_INDEX,
+    ALREADY_TAKEN,
 }

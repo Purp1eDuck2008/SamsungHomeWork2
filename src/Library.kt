@@ -31,7 +31,7 @@ class Library(
     fun removeBook(
         index: Int
     ) : OperationResult {
-        if (index !in 0 until bookCollection.size ) { return OperationResult.FAILURE }
+        if (index !in bookCollection.indices) { return OperationResult.INVALID_INDEX }
         bookCollection.removeAt(index)
         return OperationResult.SUCCESS
     }
@@ -49,8 +49,8 @@ class Library(
     fun takeBookFromLibrary(
         index: Int
     ) : OperationResult {
-        if (index !in bookCollection.indices) { return OperationResult.FAILURE }
-        if (!bookCollection[index].isAvailable) {return OperationResult.FAILURE }
+        if (index !in bookCollection.indices) { return OperationResult.INVALID_INDEX }
+        if (!bookCollection[index].isAvailable) {return OperationResult.ALREADY_TAKEN }
         bookCollection[index].isAvailable = false
         return OperationResult.SUCCESS
     }
@@ -59,7 +59,7 @@ class Library(
     fun returnBookToLibrary(
         index: Int
     ) : OperationResult {
-        if (index !in bookCollection.indices) {return OperationResult.FAILURE}
+        if (index !in bookCollection.indices) {return OperationResult.INVALID_INDEX}
         bookCollection[index].isAvailable = true
         return OperationResult.SUCCESS
     }

@@ -1,21 +1,22 @@
-fun checkForIndex(
-    library: Library,
-    stringRequest1: String,
-) : Int {
-    var index: Int
-        while (true) {
-            println(stringRequest1)
-            try {
-                index = readln().trim().toInt()
-                if (index in 1..library.getSize()) {
-                    break
-                }
-                println("Номер должен быть от 1 до ${library.getSize()}")
-            } catch (e: NumberFormatException) {
-                println("Нужно ввести целое число")
-            }
-        }
-        return index
+fun readValidIndex(library: Library, prompt: String): Int? {
+    val size = library.getSize()
+    while (true) {
+        val value = readIntOrNull(prompt) ?: return null
+        if (value in 1..size) return value
+        println("Номер должен быть от 1 до $size")
+    }
+}
+
+fun readIntOrNull (
+    promt: String
+) : Int? {
+    while (true) {
+        println(promt)
+        val line = readlnOrNull() ?: return null
+        val value = (line.trim()).toIntOrNull()
+        if (value != null) return value
+        println("Нужно ввести Цифру")
+    }
 }
 
 fun main() {
@@ -62,22 +63,11 @@ fun main() {
                 println("Введите ФИО автора книги:")
                 val author: String = readlnOrNull() ?: return
 
-                var yearOfRelease = 0
-                while (true) {
-                    println("Введите год выпуска книги:")
-                    try {
-                        yearOfRelease = (readlnOrNull() ?: return).trim().toInt()
-                        break
-                    } catch (e: NumberFormatException) {
-                        println("Нужно ввести целое число")
-                    }
-                }
+                val yearOfRelease = readIntOrNull("Введите год выпуска книги:") ?: return
 
                 println("Эту книгу можно выдавать посителям? [Y/n]")
-                var isAvailable: Boolean = true
-                if (readlnOrNull() == "n"){
-                    isAvailable = false
-                }
+                val answer = readlnOrNull() ?: return
+                val isAvailable = answer.trim().lowercase() != "n"
                 library.addBook(Book(title, author, yearOfRelease, isAvailable))
             }
 
@@ -86,10 +76,11 @@ fun main() {
                 println()
 
                 if (library.getSize() > 0) {
-                    val index: Int = checkForIndex(library,"Выберите номер книги для удаления:")
-                    when(library.removeBook(index - 1)) {
+                    val index = readValidIndex(library,"Выберите номер книги для удаления:") ?: return
+                    when (library.removeBook(index - 1)) {
                         OperationResult.SUCCESS -> println("Книга удалена из библиотеки")
-                        OperationResult.FAILURE -> println("Не поулчилось удалить книгу из библиотеки")
+                        OperationResult.INVALID_INDEX -> println("Такой книги нет в библиотеке")
+                        OperationResult.ALREADY_TAKEN -> println("Ошибка: неожидаемый результат удаления")
                     }
                 }
                 else {
@@ -123,10 +114,11 @@ fun main() {
             "5" -> {
                 library.listOfBook()
                 if (library.getSize() > 0) {
-                    val index = checkForIndex(library, "Выберите номер интересующей вас книги:")
+                    val index = readValidIndex(library, "Выберите номер интересующей вас книги:") ?: return
                     when (library.takeBookFromLibrary(index - 1)) {
                         OperationResult.SUCCESS -> println("Книга выдана")
-                        OperationResult.FAILURE -> println("Книга не выдана")
+                        OperationResult.ALREADY_TAKEN -> println("Книга уже занята другим пользователем")
+                        OperationResult.INVALID_INDEX -> println("Такой книги нет в библиотеке")
                     }
 
                 } else {
@@ -137,10 +129,11 @@ fun main() {
             "6" -> {
                 library.listOfBook()
                 if (library.getSize() > 0) {
-                    val index = checkForIndex(library, "Выберите номер книги которую желаете вернуть:")
+                    val index = readValidIndex(library, "Выберите номер книги которую желаете вернуть:") ?: return
                     when (library.returnBookToLibrary(index - 1)) {
-                        OperationResult.FAILURE -> println("Не получилось вернуть книгу")
-                        OperationResult.SUCCESS -> println("Книгу вернулась")
+                        OperationResult.SUCCESS -> println("Книга возвращена")
+                        OperationResult.INVALID_INDEX -> println("Такой книги нет в библиотеке")
+                        OperationResult.ALREADY_TAKEN -> println("Ошибка: неожидаемый результат возврата")
                     }
                 } else {
                     println("Список книг пуст")
