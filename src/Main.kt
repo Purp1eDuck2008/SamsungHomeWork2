@@ -1,5 +1,5 @@
-fun readValidIndex(library: Library, prompt: String): Int? {
-    val size = library.getSize()
+fun readValidIndex(size: Int, prompt: String): Int? {
+    require(size > 0) { "size должен быть больше 0, получено: $size" }
     while (true) {
         val value = readIntOrNull(prompt) ?: return null
         if (value in 1..size) return value
@@ -27,7 +27,7 @@ fun readIntOrNull (
 
 fun main() {
     // тестовые значения
-    val books = mutableListOf(
+    val books = listOf<Book>(
         Book("Война и мир", "Лев Толстой", 1869),
         Book("Анна Каренина", "Лев Толстой", 1877),
         Book("Преступление и наказание", "Фёдор Достоевский", 1866),
@@ -63,15 +63,26 @@ fun main() {
 
         when (input) {
             "1" -> {
-                println("Введите название книги:")
-                val title: String = readlnOrNull() ?: return
+                while (true) {
+                    println("Введите название книги:")
+                    val title: String = readlnOrNull() ?: return
 
-                println("Введите ФИО автора книги:")
-                val author: String = readlnOrNull() ?: return
+                    println("Введите ФИО автора книги:")
+                    val author: String = readlnOrNull() ?: return
 
-                val yearOfRelease = readIntOrNull("Введите год выпуска книги:") ?: return
+                    val yearOfRelease = readIntOrNull("Введите год выпуска книги:") ?: return
 
-                library.addBook(Book(title, author, yearOfRelease))
+                    when(library.addBook(title.trim(), author.trim(), yearOfRelease)) {
+                        OperationResult.SUCCESS -> {
+                            println("Ваша книга успешно добавлена")
+                            break
+                        }
+                        OperationResult.TITLE_IS_WRONGLY -> println("Название книги пустое, попробуйте еще раз")
+                        OperationResult.AUTHOR_IS_WRONGLY -> println("ФИО автора пустое, попробуйте еще раз")
+                        OperationResult.YEAT_OF_RELEASE_IS_WRONGLY -> println("Год введен с ошибкой, попробуйте еще раз")
+                        else -> println("Ошибка: неожидаемый результат")
+                    }
+                }
             }
 
             "2" -> {
@@ -80,7 +91,7 @@ fun main() {
                 println()
 
                 if (library.getSize() > 0) {
-                    val index = readValidIndex(library,"Выберите номер книги для удаления:") ?: return
+                    val index = readValidIndex(library.getSize(),"Выберите номер книги для удаления:") ?: return
                     when (library.removeBook(index - 1)) {
                         OperationResult.SUCCESS -> println("Книга удалена из библиотеки")
                         OperationResult.INVALID_INDEX -> println("Такой книги нет в библиотеке")
@@ -118,7 +129,7 @@ fun main() {
             "5" -> {
                 listOfBook(library)
                 if (library.getSize() > 0) {
-                    val index = readValidIndex(library, "Выберите номер интересующей вас книги:") ?: return
+                    val index = readValidIndex(library.getSize(), "Выберите номер интересующей вас книги:") ?: return
                     when (library.takeBookFromLibrary(index - 1)) {
                         OperationResult.SUCCESS -> println("Книга выдана")
                         OperationResult.ALREADY_TAKEN -> println("Книга уже занята другим пользователем")
@@ -134,7 +145,7 @@ fun main() {
             "6" -> {
                 listOfBook(library)
                 if (library.getSize() > 0) {
-                    val index = readValidIndex(library, "Выберите номер книги которую желаете вернуть:") ?: return
+                    val index = readValidIndex(library.getSize(), "Выберите номер книги которую желаете вернуть:") ?: return
                     when (library.returnBookToLibrary(index - 1)) {
                         OperationResult.SUCCESS -> println("Книга возвращена")
                         OperationResult.INVALID_INDEX -> println("Такой книги нет в библиотеке")

@@ -1,6 +1,8 @@
 class Library(
-    private val bookCollection: MutableList<Book>
+    initialBookCollection: List<Book>
 ) {
+    private val bookCollection: MutableList<Book> = initialBookCollection.toMutableList()
+
     //Вывод списка всех книг с индексом
     fun getNumberedBooks(): List<String> =
         bookCollection.mapIndexed { index, book -> "${index + 1}: $book" }
@@ -12,9 +14,16 @@ class Library(
 
     //Добавление новой книги в библиотеку
     fun addBook(
-        newBook: Book
-    ) {
-        bookCollection.add(newBook)
+        title: String,
+        author: String,
+        yearOfRelease: Int,
+    ) : OperationResult  {
+        if (title.isBlank()) return OperationResult.TITLE_IS_WRONGLY
+        if (author.isBlank()) return OperationResult.AUTHOR_IS_WRONGLY
+        if (yearOfRelease <= 0 || yearOfRelease >= 2030) return OperationResult.YEAT_OF_RELEASE_IS_WRONGLY
+        bookCollection.add(Book(title, author, yearOfRelease))
+        return OperationResult.SUCCESS
+
     }
 
     //Удаление книги из библиотеки

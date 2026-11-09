@@ -3,4 +3,7 @@ enum class OperationResult {
     INVALID_INDEX,
     ALREADY_TAKEN,
     NOT_TAKEN,
+    TITLE_IS_WRONGLY,
+    AUTHOR_IS_WRONGLY,
+    YEAT_OF_RELEASE_IS_WRONGLY
 }
