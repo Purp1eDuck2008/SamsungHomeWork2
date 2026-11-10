@@ -4,7 +4,7 @@ class Library(
     private val bookCollection: MutableList<Book> = initialBookCollection.toMutableList()
 
     fun getNumberedBooks(): List<String> =
-        bookCollection.mapIndexed { index, book -> "1 $book" }
+        bookCollection.mapIndexed { index, book -> "${index + 1}: $book" }
 
     fun getSize() : Int {
         return bookCollection.size
