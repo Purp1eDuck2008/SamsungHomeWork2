@@ -25,6 +25,134 @@ fun readIntOrNull (
     }
 }
 
+fun handleAddBook(library : Library){
+    while (true) {
+        println("Введите название книги:")
+        val title: String = readlnOrNull() ?: return
+
+        println("Введите ФИО автора книги:")
+        val author: String = readlnOrNull() ?: return
+
+        val yearOfRelease = readIntOrNull("Введите год выпуска книги:") ?: return
+
+        when(library.addBook(title.trim(), author.trim(), yearOfRelease)) {
+            OperationResult.SUCCESS -> {
+                println("Ваша книга успешно добавлена")
+                break
+            }
+            OperationResult.INVALID_TITLE -> println("Название книги пустое, попробуйте еще раз")
+            OperationResult.INVALID_AUTHOR -> println("ФИО автора пустое, попробуйте еще раз")
+            OperationResult.INVALID_YEAR -> println("Год введен с ошибкой, попробуйте еще раз")
+            OperationResult.ALREADY_EXISTS -> println("Книга уже есть в списке")
+            else -> println("Ошибка: неожидаемый результат")
+        }
+    }
+}
+
+fun handleRemoveBook(library : Library){
+    listOfBook(library)
+    println()
+    if (library.getSize() > 0) {
+        val index = readValidIndex(library.getSize(),"Выберите номер книги для удаления:") ?: return
+        when (library.removeBook(index - 1)) {
+            OperationResult.SUCCESS -> println("Книга удалена из библиотеки")
+            OperationResult.INVALID_INDEX -> println("Такой книги нет в библиотеке")
+            else -> println("Ошибка: неожидаемый результат")
+        }
+    }
+    else {
+        println("Список книг пуст")
+    }
+}
+
+fun handleSearchByAuthor(library : Library){
+    println("Введите ФИО автора:")
+    val found = library.searchByAuthor(readlnOrNull() ?: return)
+    if (found.isNotEmpty()) {
+        println("Книги найденные по вашему запросу:")
+        found.forEach { println(it) }
+    } else {
+        println("Книги этого автора не найдены")
+    }
+}
+
+fun handleSearchByTitle(library : Library) {
+    println("Введите название, интересующей вас книги:")
+    val found = library.searchByTitle(readlnOrNull() ?: return)
+    if (found.isNotEmpty()) {
+        println("Книги найденные по вашему запросу:")
+        found.forEach { println(it) }
+    }
+    else {
+        println("Книги с таким названием не найдеы")
+    }
+}
+
+fun handleTakeBook(library : Library){
+    listOfBook(library)
+    if (library.getSize() > 0) {
+        val index = readValidIndex(library.getSize(), "Выберите номер интересующей вас книги:") ?: return
+        when (library.takeBookFromLibrary(index - 1)) {
+            OperationResult.SUCCESS -> println("Книга выдана")
+            OperationResult.ALREADY_TAKEN -> println("Книга уже занята другим пользователем")
+            OperationResult.INVALID_INDEX -> println("Такой книги нет в библиотеке")
+            else -> println("Ошибка: неожидаемый результат")
+        }
+    } else {
+        println("Список книг пуст")
+    }
+}
+
+fun handleReturnBook(library : Library){
+    listOfBook(library)
+    if (library.getSize() > 0) {
+        val index = readValidIndex(library.getSize(), "Выберите номер книги которую желаете вернуть:") ?: return
+        when (library.returnBookToLibrary(index - 1)) {
+            OperationResult.SUCCESS -> println("Книга возвращена")
+            OperationResult.INVALID_INDEX -> println("Такой книги нет в библиотеке")
+            OperationResult.NOT_TAKEN -> println("Книга уже возращена")
+            else -> println("Ошибка: неожидаемый результат")
+        }
+    } else {
+        println("Список книг пуст")
+    }
+}
+
+fun handleSortByYear(library : Library){
+    if (library.getSize() != 0){
+        library.sortByYearOfRelease()
+        listOfBook(library)
+        println("Книги отсортированы")
+    }
+    else {
+        println("Библиотека пуста")
+    }
+}
+
+fun handleShowAll(library : Library) {
+    if (library.getSize() != 0) {
+        listOfBook(library)
+    }
+    else{
+        println("Библиотека пуста")
+    }
+}
+
+fun printMenu() {
+    println("""
+=== Система управления библиотекой ===
+1. Добавить книгу
+2. Удалить книгу
+3. Поиск книг автора
+4. Поиск книги по названию
+5. Взять книгу из библиотеки
+6. Вернуть книгу в библиотеку
+7. Отсортить книги по году выпуска
+8. Показать все книги
+0. Завершить работу"""
+    )
+}
+
 fun main() {
     // тестовые значения
     val books = listOf<Book>(
@@ -47,135 +175,26 @@ fun main() {
     var input: String = ""
 
     while( input != "0") {
-        println("""
-=== Система управления библиотекой ===
-1. Добавить книгу
-2. Удалить книгу
-3. Поиск книг автора
-4. Поиск книги по названию
-5. Взять книгу из библиотеки
-6. Вернуть книгу в библиотеку
-7. Отсортить книги по году выпуска
-8. Показать все книги
-0. Завершить работу"""
-        )
+        printMenu()
+
         input = readlnOrNull() ?: return
 
         when (input) {
-            "1" -> {
-                while (true) {
-                    println("Введите название книги:")
-                    val title: String = readlnOrNull() ?: return
+            "1" -> handleAddBook(library)
 
-                    println("Введите ФИО автора книги:")
-                    val author: String = readlnOrNull() ?: return
+            "2" -> handleRemoveBook(library)
 
-                    val yearOfRelease = readIntOrNull("Введите год выпуска книги:") ?: return
+            "3" -> handleSearchByAuthor(library)
 
-                    when(library.addBook(title.trim(), author.trim(), yearOfRelease)) {
-                        OperationResult.SUCCESS -> {
-                            println("Ваша книга успешно добавлена")
-                            break
-                        }
-                        OperationResult.TITLE_IS_WRONGLY -> println("Название книги пустое, попробуйте еще раз")
-                        OperationResult.AUTHOR_IS_WRONGLY -> println("ФИО автора пустое, попробуйте еще раз")
-                        OperationResult.YEAT_OF_RELEASE_IS_WRONGLY -> println("Год введен с ошибкой, попробуйте еще раз")
-                        else -> println("Ошибка: неожидаемый результат")
-                    }
-                }
-            }
+            "4" -> handleSearchByTitle(library)
 
-            "2" -> {
-                listOfBook(library)
+            "5" -> handleTakeBook(library)
 
-                println()
+            "6" -> handleReturnBook(library)
 
-                if (library.getSize() > 0) {
-                    val index = readValidIndex(library.getSize(),"Выберите номер книги для удаления:") ?: return
-                    when (library.removeBook(index - 1)) {
-                        OperationResult.SUCCESS -> println("Книга удалена из библиотеки")
-                        OperationResult.INVALID_INDEX -> println("Такой книги нет в библиотеке")
-                        else -> println("Ошибка: неожидаемый результат")
-                    }
-                }
-                else {
-                    println("Список книг пуст")
-                }
-            }
+            "7" -> handleSortByYear(library)
 
-            "3" -> {
-                println("Введите ФИО автора:")
-                val found = library.searchByAuthor(readlnOrNull() ?: return)
-                if (found.isNotEmpty()) {
-                    println("Книги найденные по вашему запросу:")
-                    found.forEach { println(it) }
-                } else {
-                    println("Книги этого автора не найдены")
-                }
-            }
-
-            "4" -> {
-                println("Введите название, интересующей вас книги:")
-                val found = library.searchByTitle(readlnOrNull() ?: return)
-                if (found.isNotEmpty()) {
-                    println("Книги найденные по вашему запросу:")
-                    found.forEach { println(it) }
-                }
-                else {
-                    println("Книги с таким названием не найдеы")
-                }
-            }
-
-            "5" -> {
-                listOfBook(library)
-                if (library.getSize() > 0) {
-                    val index = readValidIndex(library.getSize(), "Выберите номер интересующей вас книги:") ?: return
-                    when (library.takeBookFromLibrary(index - 1)) {
-                        OperationResult.SUCCESS -> println("Книга выдана")
-                        OperationResult.ALREADY_TAKEN -> println("Книга уже занята другим пользователем")
-                        OperationResult.INVALID_INDEX -> println("Такой книги нет в библиотеке")
-                        else -> println("Ошибка: неожидаемый результат")
-                    }
-
-                } else {
-                    println("Список книг пуст")
-                }
-            }
-
-            "6" -> {
-                listOfBook(library)
-                if (library.getSize() > 0) {
-                    val index = readValidIndex(library.getSize(), "Выберите номер книги которую желаете вернуть:") ?: return
-                    when (library.returnBookToLibrary(index - 1)) {
-                        OperationResult.SUCCESS -> println("Книга возвращена")
-                        OperationResult.INVALID_INDEX -> println("Такой книги нет в библиотеке")
-                        OperationResult.NOT_TAKEN -> println("Книга уже возращена")
-                        else -> println("Ошибка: неожидаемый результат")
-                    }
-                } else {
-                    println("Список книг пуст")
-                }
-            }
-
-            "7" -> {
-                if (library.getSize() != 0){
-                    library.sortByYearOfRelease()
-                    listOfBook(library)
-                    println("Книги отсортированы")
-                }
-                else {
-                    println("Библиотека пуста")
-                }
-            }
-
-            "8" -> {
-                if (library.getSize() != 0) {
-                    listOfBook(library)
-                }
-                else{
-                    println("Библиотека пуста")
-                }
-            }
+            "8" -> handleShowAll(library)
 
             "0" -> {
                 println("Будем рады увидеть вас вновь!")
